@@ -3,501 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IJ3 - Informática para el Futuro</title>
+    <title>IPF - Informática para el Futuro</title>
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-            background: #a1d5ff;
-        }
+body {
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    background: #a1d5ff;
+}
 
-        #gameContainer {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            background: #a1d5ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* CONTENEDOR PRINCIPAL */
+#gameContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+#brillo {
+    position: absolute;
+    bottom: 0%;   /* 🔧 distancia desde el borde inferior */
+    right: 27%;    /* 🔧 distancia desde el borde derecho */
+    width: 10%;   /* 🔧 tamaño relativo (se adapta automáticamente) */
+    max-width: 100px;
+    aspect-ratio: 1 / 1;
+    background-image: url('img/Logo.png'); /* ⬅️ cambia por tu imagen */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 6; /* delante del fondo pero detrás del botón si quieres */
+}
+/* FONDO PRINCIPAL */
+#backgroundImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* <---------- cambia contain → cover para cubrir toda la pantalla */
+    object-position: center;
+    pointer-events: none;
+    z-index: 1;
+}
 
-        #backgroundImage {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center;
-            pointer-events: none;
-            z-index: 1;
-        }
+/* TÍTULO */
+#titulo {
+    position: absolute;
+    top: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40vw;
+    max-width: 500px;
+    height: auto;
+    z-index: 4;
+}
 
-        /* Título/Sigla */
-        #titulo {
-            position: absolute;
-            top: -10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 500px;
-            max-width: 90vw;
-            height: auto;
-            z-index: 4;
-        }
+/* MARIO ESPERANDO */
+#mario {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 9vw;
+    height: auto;
+    aspect-ratio: 0.8 / 1;
+    background-image: url('img/marioEspoera.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    z-index: 5;
+    display: block;
+}
 
-        /* Mario en posición de espera (parado) */
-        #mario {
-            position: absolute;
-            bottom: 8%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 100px;
-            background-image: url('img/marioEspoera.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center bottom;
-            z-index: 5;
-            display: block;
-        }
+/* MARIO SALTANDO */
+#mario.jumping {
+    background-image: url('img/MarioJump.png');
+    animation: jump 0.6s ease-in-out;
+    width: 16vw;
+    height: auto;
+    aspect-ratio: 1 / 1.2;
+}
 
-        /* Mario saltando */
-        #mario.jumping {
-            background-image: url('img/MarioJump.png');
-            animation: jump 0.6s ease-in-out;
-            width: 160px;      
+@keyframes jump {
+    0% {
+        bottom: 8%;
+        transform: translateX(-50%) rotate(0deg);
+    }
+    50% {
+        bottom: 45%;
+        transform: translateX(-50%) rotate(-3deg);
+    }
+    100% {
+        bottom: 8%;
+        transform: translateX(-50%) rotate(0deg);
+    }
+}
+
+/* BLOQUE CON INTERROGACIÓN */
+.block {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6vw;
+    max-width: 65px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    background-image: url('img/bloque.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 3;
+}
+
+.block.hit {
+    animation: blockHit 0.3s ease-out;
+}
+
+@keyframes blockHit {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-12px);
+    }
+}
+
+/* BOTÓN DE SALTO */
+.jump-button {
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20vw;
+    max-width: 160px;
+    height: auto;
+    aspect-ratio: 1.6 / 1;
+    background-image: url('img/icono.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    z-index: 10;
+}
+
+.jump-button:hover {
+    transform: translateX(-50%) scale(1.1);
+}
+
+.jump-button:active {
+    transform: translateX(-50%) scale(0.95);
+}
+
+/* MENSAJE EMERGENTE */
+.message {
+    position: absolute;
+    left: 50%;
+    top: 8%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.98);
+    border: 5px solid #FFD700;
+    border-radius: 15px;
+    padding: 25px 35px;
+    max-width: 90%;
+    width: 650px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    z-index: 20;
+    opacity: 0;
+    animation: showMessage 0.4s ease-out forwards;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+@keyframes showMessage {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+}
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #D2691E;
+    color: white;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.close-btn:hover {
+    background: #A0522D;
+    transform: scale(1.15) rotate(90deg);
+}
+
+/* 📱 ADAPTACIÓN RESPONSIVA */
+@media (max-width: 768px) {
+    #titulo {
+        width: 60vw;
+        top: 3vh;
+    }
+
+    #mario {
+        width: 12vw;
+    }
+
+    .block {
+        width: 10vw;
+        top: 40%;
+    }
+
+    .jump-button {
+        width: 35vw;
+        bottom: 3%;
+    }
+
+    .message {
+        width: 90%;
+        font-size: 13px;
+        padding: 18px 24px;
+    }
+ 
+}
+
+@media (max-width: 480px) {
+    #titulo {
+        width: 70vw;
+        top: 2vh;
+    }
+
+    #mario {
+        width: 16vw;
+        bottom: 10%;
+    }
+
+    .block {
+        width: 14vw;
+        top: 45%;
+    }
+
+    .jump-button {
+        width: 45vw;
+        bottom: 4%;
+    }
+
+    .message {
+        width: 95%;
+        font-size: 12px;
+        padding: 15px 20px;
+        border-width: 3px;
+    }
+
+    .close-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+    #backgroundImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* 🔧 cambia contain → cover para cubrir toda la pantalla */
+    object-position: center;
+    pointer-events: none;
+    z-index: 1;
+}
+ #brillo {
+        bottom: 4%;
+        right: 5%;
+        width: 18vw; /* un poco más grande en pantallas chicas */
+        max-width: 80px;
+    }
+}
+/* ============================== */
+/* 1️⃣ ESTILOS BASE - PARA PC */
+/* ============================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    background: #a1d5ff;
+}
+
+#gameContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#backgroundImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 🔧 se adapta al tamaño de la pantalla */
+    object-position: center;
+    z-index: 1;
+}
+
+/* 🏷️ TÍTULO */
+#titulo {
+    position: absolute;
+     top: -10%; /* 🔧 distancia desde la parte superior */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40vw; /* 🔧 ancho relativo a la pantalla */
+    max-width: 500px;
+    z-index: 4;
+}
+
+/* 🍄 MARIO ESPERANDO */
+#mario {
+    position: absolute;
+    bottom: 8%; /* 🔧 distancia desde abajo */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+            height: 100px; /* 🔧 tamaño proporcional al ancho de pantalla */
+    background-image: url('img/marioEspoera.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    z-index: 5;
+}
+
+/* ✨ MARIO SALTANDO */
+#mario.jumping {
+    background-image: url('img/MarioJump.png');
+    animation: jump 0.6s ease-in-out;
+    width: 160px;      
             height: 190px;
-        }
+}
 
-        @keyframes jump {
-            0% {
-                bottom: 8%;
-                transform: translateX(-50%) rotate(0deg);
-            }
-            50% {
-                bottom: 45%;
-                transform: translateX(-50%) rotate(-3deg);
-            }
-            100% {
-                bottom: 8%;
-                transform: translateX(-50%) rotate(0deg);
-            }
-        }
+@keyframes jump {
+    0% { bottom: 8%; transform: translateX(-50%) rotate(0deg); }
+    50% { bottom: 45%; transform: translateX(-50%) rotate(-3deg); }
+    100% { bottom: 8%; transform: translateX(-50%) rotate(0deg); }
+}
 
-        /* Bloque con interrogación */
-        .block {
-            position: absolute;
-            top: 38%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 65px;
-            height: 65px;
-            background-image: url('img/bloque.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            z-index: 3;
-        }
+/* 🔲 BLOQUE */
+.block {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6vw;
+    max-width: 65px;
+    background-image: url('img/bloque.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 3;
+}
 
-        .block::before {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 40px;
-            font-weight: bold;
-            color: #FFD700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
+.block.hit {
+    animation: blockHit 0.3s ease-out;
+}
 
-        .block.hit {
-            animation: blockHit 0.3s ease-out;
-        }
+@keyframes blockHit {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-12px); }
+}
 
-        .block.hit::before {
-            content: '';
-        }
+/* 🕹️ BOTÓN DE SALTO */
+.jump-button {
+    position: absolute;
+    top: 88%; /* 🔧 distancia desde abajo */
+    bottom: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 188px;
+    height: 123px; /* 🔧 ancho proporcional */
+    max-width: 160px;
+    aspect-ratio: 1.6 / 1;
+    background-image: url('img/icono.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s ease;
+}
 
-        @keyframes blockHit {
-            0%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            50% {
-                transform: translateX(-50%) translateY(-12px);
-            }
-        }
+.jump-button:hover { transform: translateX(-50%) scale(1.1); }
+.jump-button:active { transform: translateX(-50%) scale(0.95); }
 
-        /* Botón de salto - JUMP */
-        .jump-button {
-            position: absolute;
-            bottom: -1%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 160px;
-            height: 100px;
-            background-image: url('img/icono.png');
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            z-index: 10;
-        }
+/* ============================== */
+/* 2️⃣ TABLET (max 1024px) */
+/* ============================== */
+@media (max-width: 1024px) {
+    #titulo { width: 45vw; top: 3vh; }
+    #mario { width: 10vw; bottom: 10%; }
+    .block { width: 8vw; top: 40%; }
+    .jump-button { width: 25vw; bottom: 3%; }
+}
 
-        .jump-button:hover {
-            transform: translateX(-50%) scale(1.1);
-        }
+/* ============================== */
+/* 3️⃣ CELULARES (max 768px) */
+/* ============================== */
+@media (max-width: 768px) {
+    #titulo { width: 55vw; top: -16%; }
+    #mario { width: 12vw; bottom: 12%; }
+    .block { width: 10vw; top: 42%; }
+    .jump-button { width: 35vw; bottom: 4%; }
+    #backgroundImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* 🔧 cambia contain → cover para cubrir toda la pantalla */
+    object-position: center;
+    pointer-events: none;
+    z-index: 1;
+}
+}
 
-        .jump-button:active {
-            transform: translateX(-50%) scale(0.95);
-        }
+/* ============================== */
+/* 4️⃣ CELULARES PEQUEÑOS (max 480px) */
+/* ============================== */
+@media (max-width: 480px) {
+    #titulo { width: 120%; top: -16%; }
+    #mario { width: 16vw; bottom: 17%; }
+    .block { width: 14vw; top: 36%; }
+    .jump-button { width: 45vw; bottom: 5%; top: 78%; }
+    #backgroundImage {
+    position: absolute;
+    top: -8%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: calc(); /* 🔧 cambia contain → cover para cubrir toda la pantalla */
+    object-position: center;
+    pointer-events: none;
+    z-index: 1;
+    }
+     #brillo {
+        bottom: 7%;
+        right: 0%;
+        width: 18vw; /* un poco más grande en pantallas chicas */
+        max-width: 80px;
+    }
+}
 
-        /* Cuadro de mensajes */
-        .message {
-            position: absolute;
-            left: 50%;
-            top: 8%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.98);
-            border: 5px solid #FFD700;
-            border-radius: 15px;
-            padding: 25px 35px;
-            max-width: 90%;
-            width: 650px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            z-index: 20;
-            opacity: 0;
-            animation: showMessage 0.4s ease-out forwards;
-            font-size: 15px;
-            line-height: 1.7;
-        }
-
-        @keyframes showMessage {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-30px) scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0) scale(1);
-            }
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #D2691E;
-            color: white;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .close-btn:hover {
-            background: #A0522D;
-            transform: scale(1.15) rotate(90deg);
-        }
-
-        .message h3 {
-            color: #D2691E;
-            margin-bottom: 12px;
-            font-size: 20px;
-            border-bottom: 3px solid #FFD700;
-            padding-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .message ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .message li {
-            margin-bottom: 10px;
-            padding-left: 25px;
-            position: relative;
-            color: #333;
-        }
-
-        .message li::before {
-            content: '⭐';
-            position: absolute;
-            left: 0;
-            font-size: 16px;
-        }
-
-        /* ============================================ */
-        /* RESPONSIVE PARA TABLETS (768px - 1024px) */
-        /* ============================================ */
-        @media (max-width: 1024px) {
-            #titulo {
-                width: 400px;
-                top: -5%;
-            }
-
-            #mario {
-                width: 70px;
-                height: 90px;
-            }
-
-            .block {
-                width: 60px;
-                height: 60px;
-            }
-
-            .jump-button {
-                width: 140px;
-                height: 90px;
-            }
-
-            .message {
-                width: 85%;
-                padding: 20px 30px;
-                font-size: 14px;
-            }
-        }
-        /* ============================================ */
-        /* RESPONSIVE PARA MÓVILES (max 768px) */
-        /* ============================================ */
-        @media (max-width: 768px) {
-            #titulo {
-                width: 650px;
-                top: -1%;
-            }
-
-            #mario {
-                width: 70px;
-                height: 90px;
-                bottom: 16%;
-            }
-
-            #mario.jumping {
-                width: 160px;
-                height: 200px;
-            }
-
-            .block {
-                width: 55px;
-                height: 55px;
-                top: 40%;
-            }
-
-            .block::before {
-                font-size: 35px;
-            }
-
-            .jump-button {
-                width: 190px;
-                height: 160px;
-                bottom: 2.5%;
-            }
-
-            .message {
-                width: 92%;
-                padding: 20px 25px;
-                font-size: 14px;
-                top: 9%;
-                max-height: 75vh;
-            }
-
-            .message h3 {
-                font-size: 18px;
-                margin-bottom: 10px;
-            }
-
-            .message li {
-                margin-bottom: 9px;
-                padding-left: 23px;
-                font-size: 13px;
-            }
-
-            .close-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 20px;
-            }
-
-            @keyframes jump {
-                0% {
-                    bottom: 8%;
-                    transform: translateX(-50%) rotate(0deg);
-                }
-                50% {
-                    bottom: 45%;
-                    transform: translateX(-50%) rotate(-3deg);
-                }
-                100% {
-                    bottom: 8%;
-                    transform: translateX(-50%) rotate(0deg);
-                }
-            }
-        }
-
-        /* ============================================ */
-        /* RESPONSIVE PARA MÓVILES PEQUEÑOS (max 480px) */
-        /* ============================================ */
-        @media (max-width: 480px) {
-            #titulo {
-                width: 400px;
-                top: -8%;
-            }
-
-            #mario {
-                width: 60px;
-                height: 75px;
-                bottom: 12%;
-            }
-
-            .block {
-                width: 42px;
-                height: 42px;
-                top: 50%;
-            }
-
-            .block::before {
-                font-size: 26px;
-            }
-
-            .jump-button {
-                width: 120px;
-                height: 99px;
-                bottom: 3%;
-            }
-
-            .message {
-                width: 95%;
-                padding: 15px 18px;
-                font-size: 12px;
-                top: 9%;
-                max-height: 70vh;
-                border: 3px solid #FFD700;
-            }
-
-            .message h3 {
-                font-size: 15px;
-                margin-bottom: 8px;
-                padding-bottom: 6px;
-            }
-
-            .message li {
-                margin-bottom: 7px;
-                padding-left: 20px;
-                font-size: 11px;
-                line-height: 1.5;
-            }
-
-            .message li::before {
-                font-size: 14px;
-            }
-
-            .close-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 16px;
-                top: 8px;
-                right: 8px;
-            }
-            #mario.jumping {
-                width: 120px;
-                height: 180px;
-            }
-            @keyframes jump {
-                0% {
-                    bottom: 12%;
-                    transform: translateX(-50%) rotate(0deg);
-                }
-                50% {
-                    bottom: 38%;
-                    transform: translateX(-50%) rotate(-3deg);
-                }
-                100% {
-                    bottom: 12%;
-                    transform: translateX(-50%) rotate(0deg);
-                }
-            }
-        }
-
-        /* ============================================ */
-        /* RESPONSIVE HORIZONTAL (landscape) */
-        /* ============================================ */
-        @media (max-height: 600px) and (orientation: landscape) {
-            #titulo {
-                width: 200px;
-                top: 1%;
-            }
-
-            #mario {
-                width: 45px;
-                height: 60px;
-                bottom: 15%;
-            }
-
-            .block {
-                width: 40px;
-                height: 40px;
-                top: 25%;
-            }
-
-            .jump-button {
-                width: 90px;
-                height: 55px;
-                bottom: 8%;
-            }
-
-            .message {
-                width: 70%;
-                max-width: 500px;
-                padding: 12px 18px;
-                font-size: 11px;
-                top: 3%;
-                max-height: 85vh;
-            }
-
-            .message h3 {
-                font-size: 14px;
-            }
-
-            .message li {
-                font-size: 10px;
-                margin-bottom: 5px;
-            }
-
-            @keyframes jump {
-                0% {
-                    bottom: 15%;
-                    transform: translateX(-50%) rotate(0deg);
-                }
-                50% {
-                    bottom: 45%;
-                    transform: translateX(-50%) rotate(-3deg);
-                }
-                100% {
-                    bottom: 15%;
-                    transform: translateX(-50%) rotate(0deg);
-                }
-            }
-        }
     </style>
 </head>
 <body>
@@ -516,179 +502,168 @@
         
         <!-- Botón JUMP -->
         <button class="jump-button" id="jumpBtn" aria-label="Saltar"></button>
+        <div id="brillo"></div>
     </div>
 
-    <script>
-        const messages = [
-            {
-                title: "1. Lucha Contra la Corrupción",
-                content: [
-                    "Tráfico de influencia de contra autoridades tan a familiares sin examen de competencia. Complicidad de decano y director de carrera.",
-                    "La obstaculización de decanatura a todos los trámites mediante objeciones sistemáticas.",
-                    "Rectorado y decanato llevaron el proyecto Key Lab convenio con Corea del Sur para IA a la Facultad de ingeniería ya la Técnica"
-                ]
-            },
-            {
-                title: "2. Fortalecer la Institución: Académico",
-                content: [
-                    "Continuidad de los 7 nuevos planes ya implementadas",
-                    "Apoyar a docentes y estudiantes en material académico",
-                    "Mejorar los cursos de temporada en consenso con docentes y estudiantes",
-                    "Evaluar y acreditar nuestros programas académicos, y actualizar los planes",
-                    "Impulsar el Plan Estratégico de la Carrera PEI"
-                ]
-            },
-            {
-                title: "3. Fortalecer la Institución: Tecnológico",
-                content: [
-                    "Mejoramiento de la red inalámbrica, mas Internet para Informática",
-                    "Mejoramiento de laboratorios para uso de estudiantes",
-                    "Mejorar acceso uso de tecnologías en Data Center para aplicaciones CLOUD, y la Carrera pueda contar con su propia Nube de Informática",
-                    "Potenciar recursos para IA",
-                    "Fortalecer la Radio OPEN Informática, para los estudiantes, y puedan mostrar sus productos en extensión universitaria"
-                ]
-            },
-            {
-                title: "4. Económico: Recuperar los recursos del Pre facultativo",
-                content: [
-                    "Continuar la lucha y recuperar los recursos del Pre facultativo en su mayoría generados por postulantes a informática",
-                    "La decanatura se queda con el 100% de los recursos generados en cursos pre universitarios.",
-                    "Se calcula que el pre universitario o pre facultativo genera mas de 2 millones de bolivianos por gestión, los cuales se estarían gastando desde decanatura en complicidad con rectorado en preparación de la campaña rectoral del 2027",
-                    "Las contrataciones que haría decanato serían de personal político dirigido a campañas políticas.",
-                    "Transparentaremos el uso de esos recursos."
-                ]
-            },
-            {
-                title: "5. Posgrado y Facultización",
-                content: [
-                    "Continuar la lucha histórica por la facultización de Informática, somos la segunda carrera mas grande de la UMSA",
-                    "Continuar la lucha por nuestra institución pese a las adversidades y contra el decano de turno.",
-                    "El uso arbitrario de los recursos de posgrado de informática, el decano uso mas de Bs. 100.000.- el 2024 para gastos de decanatura.",
-                    "Nunca olvidaremos que el 2013 con la Licenciada Elizabeth Garcia había 1,300,000.- para compra de un edificio de posgrado, dinero que desapareció en área desconcentrada de decanato. Memoriam a la Querida Colega."
-                ]
-            }
-        ];
-
-        let currentMessage = null;
-        const jumpBtn = document.getElementById('jumpBtn');
-        const mario = document.getElementById('mario');
-        const block = document.getElementById('block');
-        let isJumping = false;
-        let messageQueue = [];
-        let currentMessageIndex = 0;
-
-        function initializeMessageQueue() {
-            messageQueue = [...messages];
-            for (let i = messageQueue.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [messageQueue[i], messageQueue[j]] = [messageQueue[j], messageQueue[i]];
-            }
-            currentMessageIndex = 0;
+ <script>
+    const messages = [
+        {
+            title: "1. Lucha Contra la Corrupción",
+            content: [
+                "Tráfico de influencias de autoridades hacia familiares, sin examen de competencia. Complicidad del decano y del director de carrera.",
+                "La obstaculización de la decanatura a todos los trámites mediante objeciones sistemáticas.",
+                "Rectorado y decanato llevaron el proyecto Key Lab, en convenio con Corea del Sur para IA, a la Facultad de Ingeniería y a la Técnica."
+            ]
+        },
+        {
+            title: "2. Fortalecer la Institución: Académico",
+            content: [
+                "Continuidad de los 7 nuevos planes ya implementados.",
+                "Apoyar a docentes y estudiantes en materia académica.",
+                "Mejorar los cursos de temporada en consenso con docentes y estudiantes.",
+                "Evaluar y acreditar nuestros programas académicos, y actualizar los planes.",
+                "Impulsar el Plan Estratégico de la Carrera (PEI)."
+            ]
+        },
+        {
+            title: "3. Fortalecer la Institución: Tecnológico",
+            content: [
+                "Mejoramiento de la red inalámbrica; más Internet para Informática.",
+                "Mejoramiento de laboratorios para el uso de los estudiantes.",
+                "Mejorar el acceso y uso de tecnologías en el Data Center para aplicaciones en la nube, de modo que la carrera pueda contar con su propia nube de Informática.",
+                "Potenciar recursos para IA.",
+                "Fortalecer la Radio OPEN Informática para que los estudiantes puedan mostrar sus productos en extensión universitaria."
+            ]
+        },
+        {
+            title: "4. Económico: Recuperar los recursos del Prefacultativo",
+            content: [
+                "Continuar la lucha y recuperar los recursos del prefacultativo, en su mayoría generados por postulantes a Informática.",
+                "La decanatura retiene el 100% de los recursos generados en cursos preuniversitarios.",
+                "Se calcula que el prefacultativo genera más de 2 millones de bolivianos por gestión, los cuales se estarían gastando desde la decanatura en la preparación de la campaña rectoral del 2027.",
+                "Las contrataciones realizadas por el decanato serían de personal político dirigido a campañas políticas.",
+                "Haremos transparente el uso de esos recursos."
+            ]
+        },
+        {
+            title: "5. Posgrado y Facultización",
+            content: [
+                "Continuar la lucha histórica por la facultización de Informática; somos la segunda carrera más grande de la UMSA.",
+                "Continuar la lucha por nuestra institución pese a las adversidades y contra el decano de turno.",
+                "El uso arbitrario de los recursos de posgrado de Informática: el decano usó más de Bs. 100.000 en 2024 para gastos de decanatura.",
+                "Nunca olvidaremos que en 2013, con la Licenciada Elizabeth García, había Bs. 1.300.000 destinados a la compra de un edificio para posgrado; dinero que desapareció en el área desconcentrada del decanato. In memoriam a la querida colega."
+            ]
         }
+    ];
 
-        function getNextMessage() {
-            if (currentMessageIndex >= messageQueue.length) {
-                initializeMessageQueue();
-            }
-            return messageQueue[currentMessageIndex++];
+    let currentMessage = null;
+    const jumpBtn = document.getElementById('jumpBtn');
+    const mario = document.getElementById('mario');
+    const block = document.getElementById('block');
+    let isJumping = false;
+    let currentMessageIndex = 0;
+
+    function getNextMessage() {
+        const message = messages[currentMessageIndex];
+        currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+        return message;
+    }
+
+    function createJumpSound() {
+        try {
+            const audio = new Audio('sounds/salto.mp3');
+            audio.volume = 0.5;
+            audio.play();
+        } catch (e) {
+            console.log('Audio no disponible');
         }
+    }
 
-        function createJumpSound() {
-            try {
-                const audio = new Audio('sounds/salto.mp3');
-                audio.volume = 0.5;
-                audio.play();
-            } catch (e) {
-                console.log('Audio no disponible');
-            }
+    function createHitSound() {
+        try {
+            const audio = new Audio('sounds/coin.mp3');
+            audio.volume = 0.5;
+            audio.play();
+        } catch (e) {
+            console.log('Audio no disponible');
         }
+    }
 
-        function createHitSound() {
-            try {
-                const audio = new Audio('sounds/coin.mp3');
-                audio.volume = 0.5;
-                audio.play();
-            } catch (e) {
-                console.log('Audio no disponible');
-            }
+    jumpBtn.addEventListener('click', function() {
+        if (isJumping) return;
+        
+        isJumping = true;
+        mario.classList.add('jumping');
+        
+        createJumpSound();
+
+        setTimeout(() => {
+            hitBlock();
+        }, 400);
+
+        setTimeout(() => {
+            mario.classList.remove('jumping');
+            isJumping = false;
+        }, 800);
+    });
+
+    function hitBlock() {
+        block.classList.add('hit');
+        createHitSound();
+        
+        const nextMessage = getNextMessage();
+        showMessage(nextMessage);
+
+        setTimeout(() => {
+            block.classList.remove('hit');
+        }, 500);
+    }
+
+    function showMessage(messageData) {
+        if (currentMessage) {
+            currentMessage.remove();
         }
-
-        initializeMessageQueue();
-
-        jumpBtn.addEventListener('click', function() {
-            if (isJumping) return;
-            
-            isJumping = true;
-            mario.classList.add('jumping');
-            
-            createJumpSound();
-
-            setTimeout(() => {
-                hitBlock();
-            }, 400);
-
-            setTimeout(() => {
-                mario.classList.remove('jumping');
-                isJumping = false;
-            }, 800);
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        
+        let contentHTML = '<h3>' + messageData.title + '</h3><ul>';
+        messageData.content.forEach(item => {
+            contentHTML += '<li>' + item + '</li>';
         });
+        contentHTML += '</ul>';
+        contentHTML += '<button class="close-btn" onclick="closeMessage()">✕</button>';
+        
+        messageDiv.innerHTML = contentHTML;
+        document.getElementById('gameContainer').appendChild(messageDiv);
+        currentMessage = messageDiv;
+    }
 
-        function hitBlock() {
-            block.classList.add('hit');
-            createHitSound();
-            
-            const nextMessage = getNextMessage();
-            showMessage(nextMessage);
-
-            setTimeout(() => {
-                block.classList.remove('hit');
-            }, 500);
+    window.closeMessage = function() {
+        if (currentMessage) {
+            currentMessage.remove();
+            currentMessage = null;
         }
+    };
 
-        function showMessage(messageData) {
-            if (currentMessage) {
-                currentMessage.remove();
-            }
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message';
-            
-            let contentHTML = '<h3>' + messageData.title + '</h3><ul>';
-            messageData.content.forEach(item => {
-                contentHTML += '<li>' + item + '</li>';
-            });
-            contentHTML += '</ul>';
-            contentHTML += '<button class="close-btn" onclick="closeMessage()">✕</button>';
-            
-            messageDiv.innerHTML = contentHTML;
-            document.getElementById('gameContainer').appendChild(messageDiv);
-            currentMessage = messageDiv;
+    // Soporte para barra espaciadora
+    document.addEventListener('keydown', function(e) {
+        if (e.code === 'Space' && !isJumping) {
+            e.preventDefault();
+            jumpBtn.click();
         }
+    });
 
-        window.closeMessage = function() {
-            if (currentMessage) {
-                currentMessage.remove();
-                currentMessage = null;
-            }
-        };
+    // Prevenir zoom en móviles al hacer doble tap
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+</script>
 
-        // Soporte para barra espaciadora
-        document.addEventListener('keydown', function(e) {
-            if (e.code === 'Space' && !isJumping) {
-                e.preventDefault();
-                jumpBtn.click();
-            }
-        });
-
-        // Prevenir zoom en móviles al hacer doble tap
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function(e) {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-    </script>
 </body>
 </html>
